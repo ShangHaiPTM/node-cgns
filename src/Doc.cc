@@ -1,6 +1,8 @@
 #include "Doc.h"
 #include "helper.h"
 
+namespace cgns
+{
 using std::string;
 using v8::Persistent;
 using v8::Function;
@@ -28,6 +30,9 @@ Doc::Doc(MaybeLocal<String> path)
         this->open(path.ToLocalChecked());
     }
 }
+Doc::~Doc()
+{
+}
 
 void Doc::Init(Local<Object> exports)
 {
@@ -54,7 +59,11 @@ void Doc::New(const FunctionCallbackInfo<Value> &args)
     {
         Local<Context> context = isolate->GetCurrentContext();
         // Invoked as constructor: `new MyObject(...)`
-        MaybeLocal<String> path = args[0]->ToString(context);
+        MaybeLocal<String> path;
+        if (args[0]->IsString())
+        {
+            path = args[0]->ToString(context);;
+        }
         Doc *obj = new Doc(path);
         obj->Wrap(args.This());
         args.GetReturnValue().Set(args.This());
@@ -90,7 +99,7 @@ void Doc::open(Local<String> path)
 {
     String::Utf8Value v(path);
     Local<Object> _This = this->handle();
-    Isolate* isolate = _This->GetIsolate();
+    Isolate *isolate = _This->GetIsolate();
     Local<Context> context = isolate->GetCurrentContext();
 
     const int mode = CG_MODE_READ;
@@ -99,8 +108,8 @@ void Doc::open(Local<String> path)
     float version;
     CGNS_CALL(cg_version(m_handler, &version));
     V8_CALL(_This->Set(context,
-                               String::NewFromUtf8(isolate, "version"),
-                               Number::New(isolate, version)));
+                       String::NewFromUtf8(isolate, "version"),
+                       Number::New(isolate, version)));
 }
 
 void Doc::close()
@@ -110,4 +119,5 @@ void Doc::close()
         CGNS_CALL(cg_close(m_handler));
         m_handler = 0;
     }
+}
 }

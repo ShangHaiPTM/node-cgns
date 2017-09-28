@@ -18,17 +18,18 @@
 #include <iostream>
 #include <string>
 
+namespace cgns {
+    
 #if defined(_DEBUG)
 bool __IsError(const int error, const char *file, const int line, const char *func, const char *command);
 #define CGNS_CALL(command)                                         \
-    int status = command;                                          \
-    if (__IsError(status, __FILE__, __LINE__, __func__, #command)) \
+    if (__IsError(command, __FILE__, __LINE__, __func__, #command)) \
     { /*KVS_BREAKPOINT;*/                                          \
     }
 #define V8_CALL(command)              \
-    v8::Maybe<bool> result = command; \
+    {v8::Maybe<bool> result = command; \
     if (__IsError(result.IsJust() && result.ToChecked(), __FILE__, __LINE__, __func__, #command)) \
-    { /**/ }
+    { /**/ }}
 #else
 #define CGNS_CALL(command) (command)
 #define V8_CALL(command)                         \
@@ -38,3 +39,4 @@ bool __IsError(const int error, const char *file, const int line, const char *fu
 #endif // _DEBUG
 
 const std::string indents(const int i);
+}

@@ -7,8 +7,7 @@
 #include <node/node.h>
 #include <node/node_object_wrap.h>
 
-using v8::Isolate;
-
+namespace cgns {
 class Doc : public node::ObjectWrap
 {
   public:
@@ -27,7 +26,7 @@ class Doc : public node::ObjectWrap
 
   private:
     int m_handler;
-    Isolate *m_isolate;
 
     static v8::Persistent<v8::Function> constructor;
 };
+}

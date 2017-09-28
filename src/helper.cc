@@ -1,5 +1,6 @@
 #include "helper.h"
 
+namespace cgns {
 #if defined( _DEBUG )
 bool __IsError( const int error, const char* file, const int line, const char* func, const char* command )
 {
@@ -7,9 +8,7 @@ bool __IsError( const int error, const char* file, const int line, const char* f
 
     // Output message tag.
     std::string message_tag( "CGNS ERROR" );
-    std::cerr << KVS_MESSAGE_SET_COLOR( KVS_MESSAGE_RED );
     std::cerr << message_tag;
-    std::cerr << KVS_MESSAGE_RESET_COLOR;
 
     // Output message with an error string.
     std::string error_string;
@@ -26,4 +25,5 @@ bool __IsError( const int error, const char* file, const int line, const char* f
 
 const std::string indents(const int i) {
     return std::string(i * 2, ' ');
+}
 }
