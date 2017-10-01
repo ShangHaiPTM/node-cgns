@@ -5,7 +5,8 @@
       'sources': [
         'src/helper.cc',
         'src/cgns.cc',
-        'src/Doc.cc'
+        'src/Doc.cc',
+        'src/Base.cc'
       ],
       'dependencies': [
       ],

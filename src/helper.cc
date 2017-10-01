@@ -2,7 +2,7 @@
 
 namespace cgns {
 #if defined( _DEBUG )
-bool __IsError( const int error, const char* file, const int line, const char* func, const char* command )
+bool _cgns_IsError( const int error, const char* file, const int line, const char* func, const char* command )
 {
     if ( error == CG_OK ) { return false; }
 

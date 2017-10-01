@@ -21,21 +21,13 @@
 namespace cgns {
     
 #if defined(_DEBUG)
-bool __IsError(const int error, const char *file, const int line, const char *func, const char *command);
+bool _cgns_IsError(const int error, const char *file, const int line, const char *func, const char *command);
 #define CGNS_CALL(command)                                         \
-    if (__IsError(command, __FILE__, __LINE__, __func__, #command)) \
+    if (_cgns_IsError(command, __FILE__, __LINE__, __func__, #command)) \
     { /*KVS_BREAKPOINT;*/                                          \
     }
-#define V8_CALL(command)              \
-    {v8::Maybe<bool> result = command; \
-    if (__IsError(result.IsJust() && result.ToChecked(), __FILE__, __LINE__, __func__, #command)) \
-    { /**/ }}
 #else
 #define CGNS_CALL(command) (command)
-#define V8_CALL(command)                         \
-    v8::Maybe<bool> result = command;            \
-    if (!result.IsJust() || !result.ToChecked()) \
-    { /**/ }
 #endif // _DEBUG
 
 const std::string indents(const int i);

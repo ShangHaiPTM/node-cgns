@@ -1,5 +1,7 @@
 #include "Doc.h"
 #include "helper.h"
+#include "v8Helper.h"
+#include "Base.h"
 
 namespace cgns
 {
@@ -15,28 +17,28 @@ using v8::Object;
 using v8::Persistent;
 using v8::String;
 using v8::Value;
+using v8::Array;
 using v8::Context;
 using v8::MaybeLocal;
 using v8::Maybe;
+using v8::Exception;
 using node::ObjectWrap;
 
 Persistent<Function> Doc::constructor;
 
-Doc::Doc(MaybeLocal<String> path)
+Doc::Doc()
     : m_handler(0)
 {
-    if (!path.IsEmpty())
-    {
-        this->open(path.ToLocalChecked());
-    }
 }
 Doc::~Doc()
 {
+    this->close();
 }
 
 void Doc::Init(Local<Object> exports)
 {
     Isolate *isolate = exports->GetIsolate();
+    Local<Context> context = isolate->GetCurrentContext();
 
     // Prepare constructor template
     Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
@@ -47,8 +49,8 @@ void Doc::Init(Local<Object> exports)
     NODE_SET_PROTOTYPE_METHOD(tpl, "open", Open);
 
     constructor.Reset(isolate, tpl->GetFunction());
-    exports->Set(String::NewFromUtf8(isolate, "CgnsDoc"),
-                 tpl->GetFunction());
+    V_CALL(exports->Set(context, String::NewFromUtf8(isolate, "CgnsDoc"),
+                 tpl->GetFunction()));
 }
 
 void Doc::New(const FunctionCallbackInfo<Value> &args)
@@ -57,15 +59,14 @@ void Doc::New(const FunctionCallbackInfo<Value> &args)
 
     if (args.IsConstructCall())
     {
-        Local<Context> context = isolate->GetCurrentContext();
-        // Invoked as constructor: `new MyObject(...)`
-        MaybeLocal<String> path;
-        if (args[0]->IsString())
-        {
-            path = args[0]->ToString(context);;
-        }
-        Doc *obj = new Doc(path);
+        Doc *obj = new Doc();
         obj->Wrap(args.This());
+        if (args.Length() >= 1 && args[0]->IsString())
+        {
+            Local<Context> context = isolate->GetCurrentContext();
+            MaybeLocal<String> path = args[0]->ToString(context);
+            obj->open(args.This(), path.ToLocalChecked());
+        }
         args.GetReturnValue().Set(args.This());
     }
     else
@@ -85,31 +86,23 @@ void Doc::Open(const FunctionCallbackInfo<Value> &args)
 {
     Isolate *isolate = args.GetIsolate();
     Local<Context> context = isolate->GetCurrentContext();
-    Doc *obj = ObjectWrap::Unwrap<Doc>(args.Holder());
-    obj->open(args[0]->ToString(context).ToLocalChecked());
+
+    if (args.Length() != 1 || !args[0]->IsString()) {
+        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "open('path/to/file.cgns')")));
+        return;
+    }
+
+    Local<Object> _this = args.Holder();
+    Doc *_This = ObjectWrap::Unwrap<Doc>(_this);
+    Local<String> path = args[0]->ToString(context).ToLocalChecked();
+
+    _This->open(_this, path);
 }
 
 void Doc::Close(const FunctionCallbackInfo<Value> &args)
 {
-    Doc *obj = ObjectWrap::Unwrap<Doc>(args.Holder());
-    obj->close();
-}
-
-void Doc::open(Local<String> path)
-{
-    String::Utf8Value v(path);
-    Local<Object> _This = this->handle();
-    Isolate *isolate = _This->GetIsolate();
-    Local<Context> context = isolate->GetCurrentContext();
-
-    const int mode = CG_MODE_READ;
-    CGNS_CALL(cg_open(*v, mode, &m_handler));
-
-    float version;
-    CGNS_CALL(cg_version(m_handler, &version));
-    V8_CALL(_This->Set(context,
-                       String::NewFromUtf8(isolate, "version"),
-                       Number::New(isolate, version)));
+    Doc *_This = ObjectWrap::Unwrap<Doc>(args.Holder());
+    _This->close();
 }
 
 void Doc::close()
@@ -119,5 +112,28 @@ void Doc::close()
         CGNS_CALL(cg_close(m_handler));
         m_handler = 0;
     }
+}
+void Doc::open(Local<Object> _this, Local<String> path)
+{
+    V_SET_BEGIN(_this);
+    String::Utf8Value v(path);
+
+    const int mode = CG_MODE_READ;
+    CGNS_CALL(cg_open(*v, mode, &m_handler));
+
+    float version;
+    CGNS_CALL(cg_version(m_handler, &version));
+    V_SET_NUMBER(_this, "version", version);
+
+    int nbases = 0;
+    CGNS_CALL(cg_nbases(m_handler, &nbases));
+
+    V_ARRAY_BEGIN(_this, "bases");
+    for (int i = 0; i < nbases; i++)
+    {
+        V_ARRAY_ADD(Base::NewInstance(__context, this->m_handler, i + 1));
+    }
+    V_ARRAY_END();
+    V_SET_END();
 }
 }
