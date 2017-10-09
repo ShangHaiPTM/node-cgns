@@ -7,7 +7,7 @@ describe('open the file sqnz', function () {
     it(', its version should is 3.21', function () {
         let cgns = new CgnsDoc();
         cgns.open(testFile1);
-        // console.log(JSON.stringify(cgns));
+        console.log(JSON.stringify(cgns));
         expect(cgns.version).to.be.closeTo(3.21, 0.001);
     });
     it('by constructor', function () {
@@ -18,5 +18,5 @@ describe('open the file sqnz', function () {
         let cgns = new CgnsDoc(testFile1);
         expect(cgns.bases.length).to.be.equals(1);
     });
-})
+});
 

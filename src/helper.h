@@ -19,7 +19,7 @@
 #include <string>
 
 namespace cgns {
-    
+
 #if defined(_DEBUG)
 bool _cgns_IsError(const int error, const char *file, const int line, const char *func, const char *command);
 #define CGNS_CALL(command)                                         \

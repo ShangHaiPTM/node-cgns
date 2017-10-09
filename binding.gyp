@@ -6,7 +6,8 @@
         'src/helper.cc',
         'src/cgns.cc',
         'src/Doc.cc',
-        'src/Base.cc'
+        'src/Base.cc',
+        'src/Zone.cc'
       ],
       'dependencies': [
       ],
