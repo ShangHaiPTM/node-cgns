@@ -7,7 +7,10 @@
         'src/cgns.cc',
         'src/Doc.cc',
         'src/Base.cc',
-        'src/Zone.cc'
+        'src/Zone.cc',
+        'src/Grid.cc',
+        'src/Coord.cc',
+        'src/Solution.cc'
       ],
       'dependencies': [
       ],

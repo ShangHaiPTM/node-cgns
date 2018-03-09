@@ -1,6 +1,9 @@
 #include "Zone.h"
 #include "helper.h"
 #include "v8Helper.h"
+#include "Grid.h"
+#include "Coord.h"
+#include "Solution.h"
 
 namespace cgns {
 using v8::Isolate;
@@ -78,10 +81,10 @@ void Zone::Open(Local<Object> _this, int handler, int baseIndex, int zoneIndex, 
         V_SET_NUMBER(_this, "type", type);
 
         char name[128];
-        cgsize_t sizes[9];
-        cgsize_t rangeMin[3] = {1, 1, 1};
+        long long sizes[9];
+        // cgsize_t rangeMin[3] = {1, 1, 1};
         cgsize_t rangeMax[3] = {1, 1, 1};
-        CGNS_CALL(cg_zone_read(handler, baseIndex, zoneIndex, name, sizes));
+        CGNS_CALL(cg_zone_read(handler, baseIndex, zoneIndex, name, (long*)(void*)sizes));
         V_SET_STRING(_this, "name", name);
         V_ARRAY_BEGIN(_this, "sizes");
             if (type == Structured) {
@@ -115,7 +118,8 @@ void Zone::Open(Local<Object> _this, int handler, int baseIndex, int zoneIndex, 
         CGNS_CALL(cg_ngrids(handler, baseIndex, zoneIndex, &ngrids));
         V_ARRAY_BEGIN(_this, "grids");
             for (int i = 0; i < ngrids; i++) {
-                V_ARRAY_ADD_NUMBER(i);
+                V_ARRAY_ADD(Grid::NewInstance(__context, handler, baseIndex, zoneIndex, i + 1));
+                // V_ARRAY_ADD_NUMBER(i);
             }
         V_ARRAY_END();
 
@@ -123,7 +127,7 @@ void Zone::Open(Local<Object> _this, int handler, int baseIndex, int zoneIndex, 
         CGNS_CALL(cg_ncoords(handler, baseIndex, zoneIndex, &ncoords));
         V_ARRAY_BEGIN(_this, "coordinates");
             for (int i = 0; i < ncoords; i++) {
-                V_ARRAY_ADD_NUMBER(i);
+                V_ARRAY_ADD(Coord::NewInstance(__context, handler, baseIndex, zoneIndex, i + 1));
             }
         V_ARRAY_END();
 
@@ -139,7 +143,7 @@ void Zone::Open(Local<Object> _this, int handler, int baseIndex, int zoneIndex, 
         V_ARRAY_BEGIN(_this, "solutions");
             CGNS_CALL(cg_nsols(handler, baseIndex, zoneIndex, &nsolutions));
             for (int i = 0; i < nsolutions; i++) {
-                V_ARRAY_ADD_NUMBER(i);
+                V_ARRAY_ADD(Solution::NewInstance(__context, handler, baseIndex, zoneIndex, i + 1));
             }
         V_ARRAY_END();
 

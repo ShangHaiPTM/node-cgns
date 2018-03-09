@@ -13,6 +13,9 @@ set(SOURCE_FILES
         src/helper.h
         src/v8Helper.h
         src/Zone.cc
-        src/Zone.h)
+        src/Zone.h
+        src/Grid.cc
+        src/Coord.cc
+        src/Solution.cc)
 
 add_executable(node_cgns ${SOURCE_FILES})
