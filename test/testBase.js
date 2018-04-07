@@ -7,7 +7,8 @@ describe('Bases in sqnz file', function() {
     let doc = new cgns.CgnsDoc(testFile1);
     let bases = doc.bases;
     it('id should be a magic number', function() {
-        expect(bases[0].id).to.be.equals(4.778309726736501e-299); // I don't known what this id means.
+        //expect(bases[0].id).to.be.equals(4.778309726736501e-299); // I don't known what this id means.
+        expect(bases[0].id).to.be.equals(33554437); // I don't known what this id means.
     });
     it('cellDimension should be 3', function() {
         expect(bases[0].cellDimension).to.be.equals(3);

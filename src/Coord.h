@@ -5,7 +5,7 @@
 #ifndef NODE_CGNS_COORD_H
 #define NODE_CGNS_COORD_H
 
-#include "CGNSLib.h"
+#include "cgnslib.h"
 #include <iostream>
 #include <string>
 #include <node/node.h>

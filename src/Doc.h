@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CGNSLib.h"
+#include "cgnslib.h"
 #include <iostream>
 #include <string>
 #include <node/node.h>
