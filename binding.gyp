@@ -15,13 +15,13 @@
       'dependencies': [
       ],
       'include_dirs': [
-        '/usr/include',
+        '/usr/local/include',
+        '/usr/include'
       ],
       'libraries': [
         '-lcgns',
-        '-L/usr/lib',
-        '-lhdf5',
-        '-L/usr/lib/x86_64-linux-gnu/hdf5/serial/lib'
+        '-L/usr/local/lib',
+        '-L/usr/lib'
       ]
     }
   ]
