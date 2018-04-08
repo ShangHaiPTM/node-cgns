@@ -81,10 +81,10 @@ void Zone::Open(Local<Object> _this, int handler, int baseIndex, int zoneIndex, 
         V_SET_NUMBER(_this, "type", type);
 
         char name[128];
-        long long sizes[9];
+        int sizes[9];
         // cgsize_t rangeMin[3] = {1, 1, 1};
         cgsize_t rangeMax[3] = {1, 1, 1};
-        CGNS_CALL(cg_zone_read(handler, baseIndex, zoneIndex, name, (int*)(long*)(void*)sizes));
+        CGNS_CALL(cg_zone_read(handler, baseIndex, zoneIndex, name, (int*)(void*)sizes));
         V_SET_STRING(_this, "name", name);
         V_ARRAY_BEGIN(_this, "sizes");
             if (type == CG_Structured) {
