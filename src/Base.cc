@@ -82,7 +82,7 @@ void Base::Open(Local<Object> _this, int handler, int baseIndex) {
         V_SET_NUMBER(_this, "cellDimension", cellDim);
         V_SET_NUMBER(_this, "physicalDimension", pyhsDim);
 
-        CG_SimulationType_t simulationType;
+        CGNS_ENUMT(SimulationType_t) simulationType;
         CGNS_CALL(cg_simulation_type_read(handler, baseIndex, &simulationType));
         V_SET_NUMBER(_this, "simulationType", simulationType);
 

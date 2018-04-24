@@ -76,7 +76,7 @@ void Zone::Open(Local<Object> _this, int handler, int baseIndex, int zoneIndex, 
         CGNS_CALL(cg_zone_id(handler, baseIndex, zoneIndex, &id));
         V_SET_NUMBER(_this, "id", id);
 
-        CG_ZoneType_t type;
+        CGNS_ENUMT(ZoneType_t) type;
         CGNS_CALL(cg_zone_type(handler, baseIndex, zoneIndex, &type));
         V_SET_NUMBER(_this, "type", type);
 
@@ -87,7 +87,7 @@ void Zone::Open(Local<Object> _this, int handler, int baseIndex, int zoneIndex, 
         CGNS_CALL(cg_zone_read(handler, baseIndex, zoneIndex, name, (int*)(void*)sizes));
         V_SET_STRING(_this, "name", name);
         V_ARRAY_BEGIN(_this, "sizes");
-            if (type == CG_Structured) {
+            if (type == CGNS_ENUMV(Structured)) {
                 if (cellDimension == 2) {
                     for (int i = 0; i < 6; i++) {
                         V_ARRAY_ADD_NUMBER(sizes[i]);
