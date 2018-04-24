@@ -20,10 +20,10 @@
       ],
       'libraries': [
         '-lcgns',
-        '-lhdf5',
+        '-lhdf5_serial',
         '-L/usr/local/lib',
         '-L/usr/lib',
-        '-L/usr/lib/x86_64-linux-gnu/hdf5/serial'
+        '-L/usr/lib/x86_64-linux-gnu'
       ]
     }
   ]
